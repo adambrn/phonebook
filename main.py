@@ -1,5 +1,6 @@
 from os.path import exists
 import file_operations
+import console_interface
 path = 'phonebook.csv'
 data = {}
 if not exists(path):
@@ -7,4 +8,4 @@ if not exists(path):
 else:
     data = file_operations.reading_csv(path)
 
-print(data)
+console_interface.view(data)
