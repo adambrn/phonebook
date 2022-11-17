@@ -19,26 +19,25 @@ def delete():
     if tree.selection():
         selected_item = tree.selection()[0] ## get selected item
         values = tree.item(selected_item, option="values")
-        people.remove(values)
-        print(people)
+        #people.remove(values)
+        #print(people)
         tree.delete(selected_item)
     else:
         showerror(title="Ошибка", message="Выберите запись для удаления!")
 
 def edit():
-    
-    entryIndex = tree.focus()
-    if '' == entryIndex: return
+    if tree.selection():
+        selected_item = tree.selection()[0]
+    else:
+        showerror(title="Ошибка", message="Выберите запись для редактирования!")
+        return
 
     # Всплывающее окно
     win = Toplevel()
     win.title("Редактировать")
     win.attributes("-toolwindow", True)
 
-    for child in tree.get_children():
-        if child == entryIndex:
-            values = tree.item(child)["values"]
-            break
+    values = tree.item(selected_item, option="values")
 
     last_name_lable = Label(win, text = "Фамилия: ")
     last_name_entry = Entry(win)
@@ -70,20 +69,68 @@ def edit():
     comment_lable.grid(row = 4, column = 0)
     comment_entry.grid(row = 4, column = 1)
     
-    def DeleteCurrentEntry(tree):
-        curr = tree.focus()
-
-        if '' == curr: return
-
-        tree.delete(curr)
     
-    def ConfirmEntry(tree, entry1, entry2, entry3,entry4,entry5):
-        currInd = tree.index(tree.focus())
-        DeleteCurrentEntry(tree)
-        tree.insert('', currInd, values = (entry1, entry2, entry3,entry4,entry5))
+    def confirm_entry(tree, selected_item, entry1, entry2, entry3,entry4,entry5):
+        tree.delete(selected_item)
+        tree.insert('', int(selected_item[1:]), values = (entry1, entry2, entry3,entry4,entry5))
         return True
 
-    def UpdateThenDestroy():
+    def update_then_destroy():
+        if confirm_entry(tree, 
+        selected_item,
+        last_name_entry.get(), 
+        name_entry.get(), 
+        father_name_entry.get(), 
+        phone_entry.get(),
+        comment_entry.get()
+        ):
+            win.destroy()
+
+    okButt = ttk.Button(win, text = "Сохранить",command=update_then_destroy)
+    okButt.grid(row = 5, column = 0)
+
+    canButt = ttk.Button(win, text = "Отмена",command=win.destroy)
+    canButt.grid(row = 5, column = 1)
+#Добавить
+def add():
+    
+    # Всплывающее окно
+    win = Toplevel()
+    win.title("Добавить")
+    win.attributes("-toolwindow", True)
+
+    last_name_lable = Label(win, text = "Фамилия: ")
+    last_name_entry = Entry(win)
+    last_name_lable.grid(row = 0, column = 0)
+    last_name_entry.grid(row = 0, column = 1)
+
+    name_lable = Label(win, text = "Имя: ")
+    name_entry = Entry(win)
+    name_lable.grid(row = 1, column = 0)
+    name_entry.grid(row = 1, column = 1)
+
+    father_name_lable = Label(win, text = "Отчество: ")
+    father_name_entry = Entry(win)
+    father_name_lable.grid(row = 2, column = 0)
+    father_name_entry.grid(row = 2, column = 1)
+
+    phone_lable = Label(win, text = "телефон: ")
+    phone_entry = Entry(win)
+    phone_lable.grid(row = 3, column = 0)
+    phone_entry.grid(row = 3, column = 1)
+
+    comment_lable = Label(win, text = "Комментарий: ")
+    comment_entry = Entry(win)
+    comment_lable.grid(row = 4, column = 0)
+    comment_entry.grid(row = 4, column = 1)
+    
+    
+    def ConfirmEntry(tree, entry1, entry2, entry3,entry4,entry5):
+        if entry1 != '' or entry2 != '' or entry3 != '' or entry4 != '' or entry5 != '':
+            tree.insert('', END, values = (entry1, entry2, entry3,entry4,entry5))
+        return True
+
+    def addintree():
         if ConfirmEntry(tree, 
         last_name_entry.get(), 
         name_entry.get(), 
@@ -93,14 +140,11 @@ def edit():
         ):
             win.destroy()
 
-    okButt = ttk.Button(win, text = "Сохранить")
-    okButt.bind("<Button-1>", lambda e: UpdateThenDestroy())
+    okButt = ttk.Button(win, text = "Сохранить",command=addintree)
     okButt.grid(row = 5, column = 0)
 
-    canButt = ttk.Button(win, text = "Отмена")
-    canButt.bind("<Button-1>", lambda c: win.destroy())
+    canButt = ttk.Button(win, text = "Отмена",command=win.destroy)
     canButt.grid(row = 5, column = 1)
-
 
 root = Tk()     # создаем корневой объект - окно
 root.title('Телефонный справочник')     # устанавливаем заголовок окна
@@ -147,7 +191,7 @@ for person in people:
 bottom_frame = Frame(root)
 bottom_frame.pack()
 
-ttk.Button(bottom_frame, text = 'Добавить',).grid(row = 1, column = 1)
+ttk.Button(bottom_frame, text = 'Добавить',command=add).grid(row = 1, column = 1)
 ttk.Button(bottom_frame, text = 'Редактировать',command=edit).grid(row = 1, column = 2)
 ttk.Button(bottom_frame, text = 'Удалить',command=delete).grid(row = 1, column = 3)
 root.mainloop()
