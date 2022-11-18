@@ -1,10 +1,12 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
 from tkinter.messagebox import showerror
 
 # определяем данные для отображения
 from os.path import exists
 import file_operations
+import crud
 path = 'phonebook.csv'
 data = {}
 if not exists(path):
@@ -13,18 +15,26 @@ else:
     data = file_operations.reading_csv(path)
 people = list(tuple(x.values()) for x in data)
 
+def update_tree():
+    for child in tree.get_children():
+        tree.delete(child)
+    for person in people:
+        tree.insert('', END, values=person)
+#Импорт файла
+def get_file_name():
+    file = filedialog.askopenfilename()
 #Функция удаления записи
 def delete():
 
     if tree.selection():
         selected_item = tree.selection()[0] ## get selected item
         values = tree.item(selected_item, option="values")
-        #people.remove(values)
-        #print(people)
+        crud.delete_record(values,people)
+        file_operations.write_csv(path,people)
         tree.delete(selected_item)
     else:
         showerror(title="Ошибка", message="Выберите запись для удаления!")
-
+#редактирование
 def edit():
     if tree.selection():
         selected_item = tree.selection()[0]
@@ -71,8 +81,9 @@ def edit():
     
     
     def confirm_entry(tree, selected_item, entry1, entry2, entry3,entry4,entry5):
-        tree.delete(selected_item)
-        tree.insert('', int(selected_item[1:]), values = (entry1, entry2, entry3,entry4,entry5))
+        tree.item(selected_item, values = (entry1, entry2, entry3,entry4,entry5))
+        crud.update_record(int(selected_item[1:])-1, (entry1, entry2, entry3,entry4,entry5),people)
+        file_operations.write_csv(path,people)
         return True
 
     def update_then_destroy():
@@ -127,8 +138,13 @@ def add():
     
     def ConfirmEntry(tree, entry1, entry2, entry3,entry4,entry5):
         if entry1 != '' or entry2 != '' or entry3 != '' or entry4 != '' or entry5 != '':
+            values = (entry1, entry2, entry3,entry4,entry5)
             tree.insert('', END, values = (entry1, entry2, entry3,entry4,entry5))
-        return True
+            crud.create_record(values,people)
+            file_operations.write_csv(path,people)
+            return True
+        else:
+            showerror(title="Ошибка", message="Введите данные!")
 
     def addintree():
         if ConfirmEntry(tree, 
@@ -154,8 +170,8 @@ root.resizable(False, False)
 #меню
 menubar = Menu()
 file_menu = Menu(tearoff=0)
-file_menu.add_command(label='Импорт')
-file_menu.add_command(label='Экспорт')
+file_menu.add_command(label='Импорт', command=get_file_name)
+file_menu.add_command(label='Экспорт', command=get_file_name)
 menubar.add_cascade(label='Файл',menu=file_menu)
 menubar.add_command(label='Выход',command=root.quit)
 
@@ -168,6 +184,7 @@ top_frame.pack()
 Label(top_frame, text = 'Поиск').grid(row = 1, column = 1, sticky = N)
 ttk.Entry(top_frame, width = 40).grid(row = 1, column = 2)
 ttk.Button(top_frame, text = 'Найти',).grid(row = 1, column = 3)
+ttk.Button(top_frame, text = 'Очистить поиск',command=update_tree).grid(row = 1, column = 4)
 #таблица
 
 # определяем столбцы
