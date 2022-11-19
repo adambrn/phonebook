@@ -12,8 +12,8 @@ def gui_view(people):
     #меню
     menubar = Menu()
     file_menu = Menu(tearoff=0)
-    file_menu.add_command(label='Импорт', command=get_file_name)
-    file_menu.add_command(label='Экспорт', command=get_file_name)
+    file_menu.add_command(label='Импорт', command=lambda:get_file_name(people,tree))
+    file_menu.add_command(label='Экспорт', command=lambda:get_file_name(people,tree))
     menubar.add_cascade(label='Файл',menu=file_menu)
     menubar.add_command(label='Выход',command=root.quit)
 

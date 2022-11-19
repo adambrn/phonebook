@@ -6,8 +6,6 @@ def read_record(data):
     print(*data)
 
 def update_record(index,record,data):
-    
-    print(data)
     data[index] = record
     return data
 

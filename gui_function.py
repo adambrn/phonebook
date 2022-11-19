@@ -5,18 +5,21 @@ from tkinter.messagebox import showerror
 import file_operations
 import crud
 path = file_operations.get_data_path()
+
+#обновление списка из переменной
 def update_tree(tree,people):
     for child in tree.get_children():
         tree.delete(child)
     for person in people:
         tree.insert('', END, values=person)
+
 #Импорт файла
 def get_file_name(tree,people):
     file = filedialog.askopenfilename()
     print(file)
+
 #Функция удаления записи
 def delete(tree,people):
-
     if tree.selection():
         selected_item = tree.selection()[0] ## get selected item
         values = tree.item(selected_item, option="values")
@@ -25,6 +28,7 @@ def delete(tree,people):
         tree.delete(selected_item)
     else:
         showerror(title="Ошибка", message="Выберите запись для удаления!")
+
 #редактирование
 def edit(tree,people):
     if tree.selection():
@@ -32,7 +36,6 @@ def edit(tree,people):
     else:
         showerror(title="Ошибка", message="Выберите запись для редактирования!")
         return
-
     # Всплывающее окно
     win = Toplevel()
     win.title("Редактировать")
