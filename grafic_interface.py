@@ -12,8 +12,8 @@ def gui_view(people):
     #меню
     menubar = Menu()
     file_menu = Menu(tearoff=0)
-    file_menu.add_command(label='Импорт', command=lambda:get_file_name(people,tree))
-    file_menu.add_command(label='Экспорт', command=lambda:get_file_name(people,tree))
+    file_menu.add_command(label='Импорт', command=lambda:import_file(people,tree))
+    file_menu.add_command(label='Экспорт', command=lambda:export(people))
     menubar.add_cascade(label='Файл',menu=file_menu)
     menubar.add_command(label='Выход',command=root.quit)
 
@@ -24,9 +24,11 @@ def gui_view(people):
     top_frame.pack()
 
     Label(top_frame, text = 'Поиск').grid(row = 1, column = 1, sticky = N)
-    ttk.Entry(top_frame, width = 40).grid(row = 1, column = 2)
-    ttk.Button(top_frame, text = 'Найти',).grid(row = 1, column = 3)
+    search_entry = ttk.Entry(top_frame, width = 40)
+    search_entry.grid(row = 1, column = 2)
+    ttk.Button(top_frame, text = 'Найти',command=lambda:search(search_entry,people,tree)).grid(row = 1, column = 3)
     ttk.Button(top_frame, text = 'Очистить поиск',command=lambda:update_tree(tree,people)).grid(row = 1, column = 4)
+    
     #таблица
 
     # определяем столбцы

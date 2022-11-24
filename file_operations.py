@@ -9,7 +9,7 @@ def creating_csv(file):
 def reading_csv(file):
     with open (file, 'r', encoding = 'utf-8') as f:
         reader = csv.DictReader(f, delimiter=';')
-        return [line for line in reader]
+        return list(tuple(x.values()) for x in [line for line in reader])
 
 def write_csv(file,data):
     with open (file, 'w', encoding = 'utf-8',newline='') as f:
@@ -17,3 +17,8 @@ def write_csv(file,data):
         write = csv.writer(f,delimiter=';')
         write.writerows(data)
        
+def export_to_txt(file_path, data):
+    with open (file_path, 'w') as f:
+        for  line in data:
+            f.write(' '.join(line) + '\n')
+

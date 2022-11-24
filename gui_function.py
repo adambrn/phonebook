@@ -14,9 +14,15 @@ def update_tree(tree,people):
         tree.insert('', END, values=person)
 
 #Импорт файла
-def get_file_name(tree,people):
-    file = filedialog.askopenfilename()
-    print(file)
+def import_file(people,tree):
+    file = filedialog.askopenfilename(filetypes = [("csv files","*.csv")])
+    people += file_operations.reading_csv(file)
+    file_operations.write_csv(path,people)
+    update_tree(tree,people)
+
+def export(people):
+    file = filedialog.asksaveasfilename(initialfile= 'export_phone.txt',filetypes = [("txt files","*.txt")])
+    file_operations.export_to_txt(file,people)
 
 #Функция удаления записи
 def delete(tree,people):
@@ -42,7 +48,7 @@ def edit(tree,people):
     win.attributes("-toolwindow", True)
 
     values = tree.item(selected_item, option="values")
-
+    edit_index = people.index(tuple(values))
     last_name_lable = Label(win, text = "Фамилия: ")
     last_name_entry = Entry(win)
     last_name_entry.insert(0, values[0]) 
@@ -76,7 +82,7 @@ def edit(tree,people):
     
     def confirm_entry(tree, selected_item, entry1, entry2, entry3,entry4,entry5):
         tree.item(selected_item, values = (entry1, entry2, entry3,entry4,entry5))
-        crud.update_record(int(selected_item[1:])-1, (entry1, entry2, entry3,entry4,entry5),people)
+        crud.update_record(edit_index, (entry1, entry2, entry3,entry4,entry5),people)
         file_operations.write_csv(path,people)
         return True
 
@@ -96,6 +102,7 @@ def edit(tree,people):
 
     canButt = ttk.Button(win, text = "Отмена",command=win.destroy)
     canButt.grid(row = 5, column = 1)
+
 #Добавить
 def add(tree,people):
     
@@ -132,7 +139,7 @@ def add(tree,people):
     
     def ConfirmEntry(tree, entry1, entry2, entry3,entry4,entry5):
         if entry1 != '' or entry2 != '' or entry3 != '' or entry4 != '' or entry5 != '':
-            values = (entry1, entry2, entry3,entry4,entry5)
+            values = (entry1, entry2, entry3, entry4, entry5)
             tree.insert('', END, values = (entry1, entry2, entry3,entry4,entry5))
             crud.create_record(values,people)
             file_operations.write_csv(path,people)
@@ -155,3 +162,13 @@ def add(tree,people):
 
     canButt = ttk.Button(win, text = "Отмена",command=win.destroy)
     canButt.grid(row = 5, column = 1)
+
+#поиск
+def search(search_entry, people,tree):
+    selections = []
+    query = search_entry.get()
+    for child in people:
+        if query.lower() in ''.join(child).lower():   
+            selections.append(child)
+    update_tree(tree,selections)
+
