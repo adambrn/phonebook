@@ -23,10 +23,15 @@ def import_file(tree):
     data = db_get(path,'people')
     update_tree(tree,data)
 
-def export():
+def export_to_txt():
     file = filedialog.asksaveasfilename(initialfile= 'export_phone.txt',filetypes = [("txt files","*.txt")])
     data = db_get(path,'people')
-    file_operations.export_to_txt(file,data)
+    file_operations.save_txt(file,data)
+
+def export_to_csv():
+    file = filedialog.asksaveasfilename(initialfile= 'export_phone.csv',filetypes = [("csv files","*.csv")])
+    data = db_get(path,'people')
+    file_operations.write_csv(file,data)
 
 #Функция удаления записи
 def delete(tree):

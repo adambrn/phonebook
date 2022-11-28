@@ -13,7 +13,8 @@ def gui_view(people):
     menubar = Menu()
     file_menu = Menu(tearoff=0)
     file_menu.add_command(label='Импорт', command=lambda:import_file(tree))
-    file_menu.add_command(label='Экспорт', command=lambda:export())
+    file_menu.add_command(label='Экспорт в txt', command=lambda:export_to_txt())
+    file_menu.add_command(label='Экспорт в csv', command=lambda:export_to_csv())
     menubar.add_cascade(label='Файл',menu=file_menu)
     menubar.add_command(label='Выход',command=root.quit)
 

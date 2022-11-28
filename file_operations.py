@@ -16,12 +16,12 @@ def reading_csv(file):
 
 def write_csv(file,data):
     with open (file, 'w', encoding = 'utf-8',newline='') as f:
-        f.write(f'Фамилия;Имя;Отчество;Номер телефона;Примечание\n')
+        f.write(f'№,Фамилия;Имя;Отчество;Номер телефона;Примечание\n')
         write = csv.writer(f,delimiter=';')
         write.writerows(data)
        
-def export_to_txt(file_path, data):
-    with open (file_path, 'w') as f:
+def save_txt(file_path, data):
+    with open (file_path, 'w',encoding = 'utf-8') as f:
         for  line in data:
-            f.write(' '.join(str(line)) + '\n')
+            f.write(' '.join([str(x) for x in line]) + '\n')
 
