@@ -33,7 +33,6 @@ def db_insert_people(db_path,data):
     db_query(db_path,insert_query,data)
     
 def db_insert_peoples(db_path,data):
-    print(data)
     insert_query = 'INSERT INTO people (name ,father_name ,last_name, phone, comment ) VALUES(?,?,?,?,?)'
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
