@@ -2,6 +2,9 @@ import csv
 def get_data_path():
     return 'phonebook.csv'
 
+def get_db_path():
+    return 'base.db'
+
 def creating_csv(file):
     with open (file, 'w', encoding = 'utf-8') as f:
         f.write(f'Фамилия;Имя;Отчество;Номер телефона;Примечание\n')
@@ -20,5 +23,5 @@ def write_csv(file,data):
 def export_to_txt(file_path, data):
     with open (file_path, 'w') as f:
         for  line in data:
-            f.write(' '.join(line) + '\n')
+            f.write(' '.join(str(line)) + '\n')
 

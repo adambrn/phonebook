@@ -12,8 +12,8 @@ def gui_view(people):
     #меню
     menubar = Menu()
     file_menu = Menu(tearoff=0)
-    file_menu.add_command(label='Импорт', command=lambda:import_file(people,tree))
-    file_menu.add_command(label='Экспорт', command=lambda:export(people))
+    file_menu.add_command(label='Импорт', command=lambda:import_file(tree))
+    file_menu.add_command(label='Экспорт', command=lambda:export())
     menubar.add_cascade(label='Файл',menu=file_menu)
     menubar.add_command(label='Выход',command=root.quit)
 
@@ -26,18 +26,20 @@ def gui_view(people):
     Label(top_frame, text = 'Поиск').grid(row = 1, column = 1, sticky = N)
     search_entry = ttk.Entry(top_frame, width = 40)
     search_entry.grid(row = 1, column = 2)
-    ttk.Button(top_frame, text = 'Найти',command=lambda:search(search_entry,people,tree)).grid(row = 1, column = 3)
-    ttk.Button(top_frame, text = 'Очистить поиск',command=lambda:update_tree(tree,people)).grid(row = 1, column = 4)
+    ttk.Button(top_frame, text = 'Найти',command=lambda:search(search_entry,tree)).grid(row = 1, column = 3)
+    ttk.Button(top_frame, text = 'Очистить поиск',command=lambda:update_tree(tree,db_get(path,'people'))).grid(row = 1, column = 4)
     
     #таблица
 
     # определяем столбцы
-    columns = ('name','father_name','last_name', 'phone', 'comment')
+    columns = ('id','name','father_name','last_name', 'phone', 'comment')
     
     tree = ttk.Treeview(columns=columns, show='headings')
     tree.pack(fill=BOTH, expand=1)
     
     # определяем заголовки
+    tree.heading('id', text='№')
+    tree.column('id',minwidth=0,width=30)
     tree.heading('name', text='Имя')
     tree.heading('father_name', text='Отчество')
     tree.heading('last_name', text='Фамилия')
@@ -52,7 +54,7 @@ def gui_view(people):
     bottom_frame = Frame(root)
     bottom_frame.pack()
 
-    ttk.Button(bottom_frame, text = 'Добавить',command=lambda: add(tree,people)).grid(row = 1, column = 1)
-    ttk.Button(bottom_frame, text = 'Редактировать',command=lambda: edit(tree,people)).grid(row = 1, column = 2)
-    ttk.Button(bottom_frame, text = 'Удалить',command=lambda: delete(tree,people)).grid(row = 1, column = 3)
+    ttk.Button(bottom_frame, text = 'Добавить',command=lambda: add(tree)).grid(row = 1, column = 1)
+    ttk.Button(bottom_frame, text = 'Редактировать',command=lambda: edit(tree)).grid(row = 1, column = 2)
+    ttk.Button(bottom_frame, text = 'Удалить',command=lambda: delete(tree)).grid(row = 1, column = 3)
     root.mainloop()

@@ -10,5 +10,7 @@ def update_record(index,record,data):
     return data
 
 def delete_record(record,data):
+    print(data)
+    print(record)
     data.remove(record)
     return data
