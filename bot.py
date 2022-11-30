@@ -16,14 +16,33 @@ async def process_start_command(message: types.Message):
 
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
-    await message.answer('/help - все команды \n/all  - все записи \n/search техт - поиск ')
+    await message.answer('/help - все команды \n/all  - все записи \n/s техт - поиск ')
 
 @dp.message_handler(commands=['all'])
 async def process_help_command(message: types.Message):
     db_path = file_operations.get_db_path()
-    result = db_get(db_path,'people')
-    await message.answer(*result)
+    data = db_get(db_path,'people')
+    result = [f'{i[0]}. {i[1]} {i[2]} {i[3]} тел: {i[4]}' for i in data]
+    await message.answer('\n'.join(map(str,result)))
 
+@dp.message_handler(commands=['s'])
+async def process_help_command(message: types.Message):
+    search_result = []
+    result = []
+    db_path = file_operations.get_db_path()
+    data = db_get(db_path,'people')
+    text = ''
+    try:
+        text = message.text.split(maxsplit=1)[1]
+        for record in data:
+            if text.lower() in ''.join(str(record)).lower():   
+                search_result.append(record)
+            result = [f'{i[0]}. {i[1]} {i[2]} {i[3]} тел: {i[4]}' for i in search_result]
+    except Exception:
+        result += ('Введите текст для поиска после команды /s',)
+    
+    if not result: result += ('Ничего не найдено',)
+    await message.answer('\n'.join(map(str,result)))
 
 @dp.message_handler()
 async def echo_message(message: types.Message):
