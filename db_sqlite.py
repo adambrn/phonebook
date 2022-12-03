@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 
 def init_db(db_path):
@@ -31,6 +32,7 @@ def db_query(db_path,query,data):
 def db_insert_people(db_path,data):
     insert_query = 'INSERT INTO people (name ,father_name ,last_name, phone, comment ) VALUES(?,?,?,?,?)'
     db_query(db_path,insert_query,data)
+    logging.info(f'Добавление записи: {data}')
     
 def db_insert_peoples(db_path,data):
     insert_query = 'INSERT INTO people (name ,father_name ,last_name, phone, comment ) VALUES(?,?,?,?,?)'
@@ -39,14 +41,16 @@ def db_insert_peoples(db_path,data):
     cur.executemany(insert_query,data)
     conn.commit()
     conn.close()
+    logging.info(f'Добавление записей: {data}')
 
 def db_update_people(db_path,data,id):
-    
+    log_data = db_get_record(db_path,'people',id)
     update_query = 'UPDATE people set name=? ,father_name=? ,last_name=?, phone=?, comment=?  WHERE id=?'
     update_tuple = list(data) 
     update_tuple.append(id)
     data_and_id = tuple(update_tuple)
     db_query(db_path,update_query,data_and_id)
+    logging.info(f'Обновление записи №{id} было {log_data} стало {data}')
 
 def db_get(db_path,table):
     conn = sqlite3.connect(db_path)
@@ -55,13 +59,26 @@ def db_get(db_path,table):
     data = cur.execute(get_query)
     data_tuple =[tuple(i) for i in data]
     conn.close()
+
+    return data_tuple
+
+def db_get_record(db_path,table,id):
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor() 
+    get_query = f'SELECT * FROM {table} WHERE id={id}'
+    data = cur.execute(get_query)
+    data_tuple =[tuple(i) for i in data]
+    conn.close()
+
     return data_tuple
 
 def db_delete(db_path,table,id):
     conn = sqlite3.connect(db_path)
     cur = conn.cursor() 
+    log_data = db_get_record(db_path,table,id)
     delete_query = f'DELETE FROM {table} WHERE id={id}'
     cur.execute(delete_query)
     conn.commit()
     conn.close()
+    logging.info(f'Удаление записи №{id} данные:{log_data}')
 
